@@ -1,0 +1,27 @@
+{
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get"
+      ],
+      "authLevel": "function"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "table",
+      "name": "lightTable",
+      "tableName": "LightTable",
+      "connection": "defaultstorageblth_STORAGE",
+      "direction": "in",
+      "take": 50
+    }
+  ],
+  "disabled": false
+}

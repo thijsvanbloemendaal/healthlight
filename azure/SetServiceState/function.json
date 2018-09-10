@@ -1,0 +1,33 @@
+{
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "name": "req",
+      "authLevel": "function",
+      "methods": [
+        "post"
+      ],
+      "direction": "in"
+    },
+    {
+      "type": "http",
+      "name": "res",
+      "direction": "out"
+    },
+    {
+      "type": "queue",
+      "name": "triggerQueueItem",
+      "queueName": "triggerfunctionqueue",
+      "connection": "defaultstorageblth_STORAGE",
+      "direction": "out"
+    },
+    {
+      "type": "table",
+      "name": "serviceStateTable",
+      "tableName": "ServiceStateTable",
+      "connection": "defaultstorageblth_STORAGE",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}

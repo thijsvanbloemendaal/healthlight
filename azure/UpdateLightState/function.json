@@ -1,0 +1,27 @@
+{
+  "bindings": [
+    {
+      "type": "table",
+      "name": "serviceState",
+      "tableName": "ServiceStateTable",
+      "take": 50,
+      "connection": "defaultstorageblth_STORAGE",
+      "direction": "in"
+    },
+    {
+      "type": "table",
+      "name": "lightTable",
+      "tableName": "LightTable",
+      "connection": "defaultstorageblth_STORAGE",
+      "direction": "out"
+    },
+    {
+      "type": "queueTrigger",
+      "name": "triggerQueueItem",
+      "queueName": "triggerfunctionqueue",
+      "connection": "defaultstorageblth_STORAGE",
+      "direction": "in"
+    }
+  ],
+  "disabled": false
+}

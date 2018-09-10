@@ -1,0 +1,20 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "defaultstorageblth_STORAGE": "DefaultEndpointsProtocol=https;AccountName=defaultstorageblth;AccountKey=QvQVmxrw7LDhIxX5UAKhULkhB2CR6oVDrlIfwEwWv/x0fROvxS4sqXCDO+Ty+80AlUkVEzKXgOKbEqHvX8Jbcg==",
+    "FUNCTIONS_EXTENSION_VERSION": "~1",
+    "ScmType": "None",
+    "WEBSITE_AUTH_ENABLED": "False",
+    "WEBSITE_HTTPLOGGING_CONTAINER_URL": "https://defaultstorageblth.blob.core.windows.net/logboekdiagnostics?sv=2017-04-17&sr=c&sig=lXNmdhbaY5LgRLx7dy9R%2BNfd3XJC01iuGuPYRAUQOTQ%3D&st=2018-09-07T14:32:27Z&se=2218-09-07T14:32:27Z&sp=rwdl",
+    "WEBSITE_HTTPLOGGING_RETENTION_DAYS": "1",
+    "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=defaultstorageblth;AccountKey=QvQVmxrw7LDhIxX5UAKhULkhB2CR6oVDrlIfwEwWv/x0fROvxS4sqXCDO+Ty+80AlUkVEzKXgOKbEqHvX8Jbcg==",
+    "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "DefaultEndpointsProtocol=https;AccountName=defaultstorageblth;AccountKey=QvQVmxrw7LDhIxX5UAKhULkhB2CR6oVDrlIfwEwWv/x0fROvxS4sqXCDO+Ty+80AlUkVEzKXgOKbEqHvX8Jbcg==",
+    "WEBSITE_CONTENTSHARE": "healthlight9dec",
+    "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "https://defaultstorageblth.blob.core.windows.net/logboekdiagnostics?sv=2017-04-17&sr=c&sig=whsyEkRUqfEshxGvtU2MtW%2FGctZjW1ZjpoOR9A17Aag%3D&st=2018-09-07T14:31:32Z&se=2218-09-07T14:31:32Z&sp=rwdl",
+    "WEBSITE_SITE_NAME": "healthlight",
+    "WEBSITE_SLOT_NAME": "Production",
+    "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "1",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=defaultstorageblth;AccountKey=QvQVmxrw7LDhIxX5UAKhULkhB2CR6oVDrlIfwEwWv/x0fROvxS4sqXCDO+Ty+80AlUkVEzKXgOKbEqHvX8Jbcg=="
+  }
+}
