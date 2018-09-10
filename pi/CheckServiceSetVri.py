@@ -5,7 +5,7 @@ import threading
 import time
 import urllib.request
 import RPi.GPIO as GPIO
-#test
+
 time.sleep(12)
 
 GPIO.setmode(GPIO.BCM)
