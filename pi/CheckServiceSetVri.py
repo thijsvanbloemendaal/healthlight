@@ -5,7 +5,7 @@ import threading
 import time
 import urllib.request
 import RPi.GPIO as GPIO
-#test
+
 time.sleep(12)
 
 GPIO.setmode(GPIO.BCM)
@@ -61,29 +61,33 @@ class BlinkThread(threading.Thread):
 
     def run(self):
         while not self._stop_event.is_set():
-            if time.time() - self.currentTime > 1:
-                self.currentTime = time.time()
-                threadLock.acquire()
-                if self.state:
-                    if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
-                        #print("Blinking red light")
-                        GPIO.output(lightState.LightRed.Pin, 0)
-                    if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
-                        #print("Blinking orange light")
-                        GPIO.output(lightState.LightOrange.Pin, 0)
-                    if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
-                        #print("Blinking green light")
-                        GPIO.output(lightState.LightGreen.Pin, 0)
-                    self.state = False
-                else:
-                    if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
-                        GPIO.output(lightState.LightRed.Pin, 1)
-                    if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
-                        GPIO.output(lightState.LightOrange.Pin, 1)
-                    if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
-                        GPIO.output(lightState.LightGreen.Pin, 1)
-                    self.state = True
-                threadLock.release()
+            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
+                if time.time() - self.currentTime > 1:
+                    self.currentTime = time.time()
+                    threadLock.acquire()
+                    if self.state:
+                        if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
+                            #print("Blinking red light")
+                            GPIO.output(lightState.LightRed.Pin, 0)
+                        if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
+                            #print("Blinking orange light")
+                            GPIO.output(lightState.LightOrange.Pin, 0)
+                        if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
+                            #print("Blinking green light")
+                            GPIO.output(lightState.LightGreen.Pin, 0)
+                        self.state = False
+                    else:
+                        if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
+                            GPIO.output(lightState.LightRed.Pin, 1)
+                        if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
+                            GPIO.output(lightState.LightOrange.Pin, 1)
+                        if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
+                            GPIO.output(lightState.LightGreen.Pin, 1)
+                        self.state = True
+                    threadLock.release()
+            else:
+                print("Outside business hours, wait a minute. Time is: " + datetime.datetime.now().time())
+                time.sleep(60)
         print("stopped blinking!")
 
 def get_ip():
@@ -115,7 +119,7 @@ class readData (threading.Thread):
 
     def run(self):
         print ("Starting " + self.name)
-        while True:
+        while not self._stop_event.is_set():
             if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
                 # Get lock to synchrSonize threads
                 threadLock.acquire()
@@ -139,7 +143,7 @@ class readData (threading.Thread):
                 print("States set")
                 time.sleep(5)
             else:
-                print("Outside business hours, wait a minute")
+                print("Outside business hours, wait a minute. Time is: " + datetime.datetime.now().time())
                 time.sleep(60)
 
 class setLight (threading.Thread):
@@ -159,7 +163,7 @@ class setLight (threading.Thread):
     def run(self):
         print ("Starting " + self.name)
       
-        while True:
+        while not self._stop_event.is_set():
             if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
                 GPIO.output(self.lightState.Switch.Pin, 1)
                 # Get lock to synchronize threads
