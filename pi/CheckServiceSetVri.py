@@ -124,8 +124,8 @@ class readData (threading.Thread):
                 # Get lock to synchrSonize threads
                 threadLock.acquire()
                 ip = get_ip()
-                headers = {"CIP": ip}
-                req = urllib.request.Request(self.uri, headers)
+                headers = {"IP": ip}
+                req = urllib.request.Request(self.uri, headers=headers)
                 url = urllib.request.urlopen(req)
                 data = json.loads(url.read().decode())
 
@@ -206,7 +206,7 @@ while True:
         # Create new threads
         threadData = readData("Data Thread", lightState, uri)
         threadLight = setLight("Light Thread", lightState)
-        blinkThread = BlinkThread(lightState, "blinkThread")
+        blinkThread = BlinkThread("blinkThread", lightState)
 
         # Start new Threads
         threadData.start()
@@ -221,10 +221,11 @@ while True:
         # Wait for all threads to complete
         for t in threads:
             t.join()
-    except :
+    except Exception as ex:
         threadData.stop()
         threadLight.stop()
         blinkThread.stop()
+        print(ex)
 
 
 print ("Exiting Main Thread")
