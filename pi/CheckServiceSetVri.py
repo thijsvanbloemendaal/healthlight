@@ -86,7 +86,7 @@ class BlinkThread(threading.Thread):
                         self.state = True
                     threadLock.release()
             else:
-                print("Outside business hours, wait a minute. Time is: " + datetime.datetime.now().time())
+                print("Outside business hours, wait a minute. Time is: " + str(datetime.datetime.now().time()))
                 time.sleep(60)
         print("stopped blinking!")
 
@@ -143,7 +143,7 @@ class readData (threading.Thread):
                 print("States set")
                 time.sleep(5)
             else:
-                print("Outside business hours, wait a minute. Time is: " + datetime.datetime.now().time())
+                print("Outside business hours, wait a minute. Time is: " + str(datetime.datetime.now().time()))
                 time.sleep(60)
 
 class setLight (threading.Thread):
