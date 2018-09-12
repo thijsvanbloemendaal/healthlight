@@ -228,7 +228,7 @@ while True:
         data = {"message": ex, "level": "error"}
 
         json_data = json.dumps(data)
-        req = urllib.request.Request(self.uri, data=json_data)
+        req = urllib.request.Request("https://healthlight.azurewebsites.net/api/SaveLogging?code=vmLIhZBCghiCYjqEzh9OfZsUS0m1JELeR06aa/c65CaXoyszknM1gg==", data=json_data)
         url = urllib.request.urlopen(req)
         threadData.stop()
         threadLight.stop()
