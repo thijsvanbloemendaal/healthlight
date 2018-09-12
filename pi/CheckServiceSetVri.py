@@ -32,8 +32,8 @@ class LightState:
             self.Pattern = pattern
 
     class Switch:
-        StartTime = datetime.time(7, 00)
-        EndTime = datetime.time(23, 30)
+        StartTime = datetime.time(8, 00)
+        EndTime = datetime.time(17, 00)
         Pin = RELAY.ON
     
     LightRed = Light(RELAY.RED, False, "solid")
