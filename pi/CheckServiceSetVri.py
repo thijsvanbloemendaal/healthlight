@@ -60,6 +60,7 @@ class BlinkThread(threading.Thread):
         super(BlinkThread,self).join(*args, **kwargs)
 
     def run(self):
+        print ("Starting " + self.name)
         while not self._stop_event.is_set():
             if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
                 if time.time() - self.currentTime > 1:
@@ -170,24 +171,24 @@ class setLight (threading.Thread):
                 threadLock.acquire()
 
                 if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid":
-                    #print("Turning on red light solid")
+                    print("Turning on red light solid")
                     GPIO.output(self.lightState.LightRed.Pin, 1)
                 else:
-                    #print("Turning off red light")
+                    print("Turning off red light")
                     GPIO.output(self.lightState.LightRed.Pin, 0)
                 
                 if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid":
-                    #print("Turning on orange light solid")
+                    print("Turning on orange light solid")
                     GPIO.output(self.lightState.LightOrange.Pin, 1)
                 else:
-                    #print("Turning off orange light")
+                    print("Turning off orange light")
                     GPIO.output(self.lightState.LightOrange.Pin, 0)
 
                 if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid":
-                    #print("Turning on green light solid")
+                    print("Turning on green light solid")
                     GPIO.output(self.lightState.LightGreen.Pin, 1)
                 else:
-                    #print("Turning off green light")
+                    print("Turning off green light")
                     GPIO.output(self.lightState.LightGreen.Pin, 0)
 
                 # Free lock to release next thread
@@ -222,6 +223,7 @@ while True:
         for t in threads:
             t.join()
     except Exception as ex:
+        print("Exception found!")
         threadData.stop()
         threadLight.stop()
         blinkThread.stop()
