@@ -174,21 +174,21 @@ class setLight (threading.Thread):
                 if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid":
                     #print("Turning on red light solid")
                     GPIO.output(self.lightState.LightRed.Pin, 1)
-                else:
+                elif not self.lightState.LightRed.On:
                     #print("Turning off red light")
                     GPIO.output(self.lightState.LightRed.Pin, 0)
                 
                 if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid":
                     #print("Turning on orange light solid")
                     GPIO.output(self.lightState.LightOrange.Pin, 1)
-                else:
+                elif not self.lightState.LightOrange.On:
                     #print("Turning off orange light")
                     GPIO.output(self.lightState.LightOrange.Pin, 0)
 
                 if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid":
                     #print("Turning on green light solid")
                     GPIO.output(self.lightState.LightGreen.Pin, 1)
-                else:
+                elif not self.lightState.LightGreen.On:
                     #print("Turning off green light")
                     GPIO.output(self.lightState.LightGreen.Pin, 0)
 
