@@ -67,26 +67,28 @@ class BlinkThread(threading.Thread):
                 if time.time() - self.currentTime > 1:
                     self.currentTime = time.time()
                     threadLock.acquire()
-                    if self.state:
-                        if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
-                            #print("Blinking red light")
-                            GPIO.output(lightState.LightRed.Pin, 0)
-                        if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
-                            #print("Blinking orange light")
-                            GPIO.output(lightState.LightOrange.Pin, 0)
-                        if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
-                            #print("Blinking green light")
-                            GPIO.output(lightState.LightGreen.Pin, 0)
-                        self.state = False
-                    else:
-                        if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
-                            GPIO.output(lightState.LightRed.Pin, 1)
-                        if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
-                            GPIO.output(lightState.LightOrange.Pin, 1)
-                        if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
-                            GPIO.output(lightState.LightGreen.Pin, 1)
-                        self.state = True
-                    threadLock.release()
+                    try:
+                        if self.state:
+                            if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
+                                #print("Blinking red light")
+                                GPIO.output(lightState.LightRed.Pin, 0)
+                            if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
+                                #print("Blinking orange light")
+                                GPIO.output(lightState.LightOrange.Pin, 0)
+                            if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
+                                #print("Blinking green light")
+                                GPIO.output(lightState.LightGreen.Pin, 0)
+                            self.state = False
+                        else:
+                            if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
+                                GPIO.output(lightState.LightRed.Pin, 1)
+                            if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
+                                GPIO.output(lightState.LightOrange.Pin, 1)
+                            if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
+                                GPIO.output(lightState.LightGreen.Pin, 1)
+                            self.state = True
+                    finally:
+                        threadLock.release()
             else:
                 print("Outside business hours, wait a minute. Time is: " + str(datetime.datetime.now().time()))
                 time.sleep(60)
@@ -125,25 +127,27 @@ class readData (threading.Thread):
             if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
                 # Get lock to synchrSonize threads
                 threadLock.acquire()
-                ip = get_ip()
-                headers = {"IP": ip}
-                req = urllib.request.Request(self.uri, headers=headers)
-                url = urllib.request.urlopen(req)
-                data = json.loads(url.read().decode())
+                try:
+                    ip = get_ip()
+                    headers = {"IP": ip}
+                    req = urllib.request.Request(self.uri, headers=headers)
+                    url = urllib.request.urlopen(req)
+                    data = json.loads(url.read().decode())
 
-                self.lightState.LightRed.On = data['LightRed']['On']
-                self.lightState.LightRed.Pattern = data['LightRed']['Pattern']
+                    self.lightState.LightRed.On = data['LightRed']['On']
+                    self.lightState.LightRed.Pattern = data['LightRed']['Pattern']
 
-                self.lightState.LightOrange.On = data['LightOrange']['On']
-                self.lightState.LightOrange.Pattern = data['LightOrange']['Pattern']
+                    self.lightState.LightOrange.On = data['LightOrange']['On']
+                    self.lightState.LightOrange.Pattern = data['LightOrange']['Pattern']
 
-                self.lightState.LightGreen.On = data['LightGreen']['On']
-                self.lightState.LightGreen.Pattern = data['LightGreen']['Pattern']
+                    self.lightState.LightGreen.On = data['LightGreen']['On']
+                    self.lightState.LightGreen.Pattern = data['LightGreen']['Pattern']
 
-                # Free lock to release next thread
-                threadLock.release()
-                print("States set")
-                time.sleep(5)
+                    # Free lock to release next thread
+                finally:
+                    threadLock.release()
+                    print("States set")
+                    time.sleep(5)
             else:
                 print("Outside business hours, wait a minute. Time is: " + str(datetime.datetime.now().time()))
                 time.sleep(60)
@@ -170,30 +174,30 @@ class setLight (threading.Thread):
                 GPIO.output(self.lightState.Switch.Pin, 1)
                 # Get lock to synchronize threads
                 threadLock.acquire()
+                try:
+                    if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid":
+                        #print("Turning on red light solid")
+                        GPIO.output(self.lightState.LightRed.Pin, 1)
+                    elif not self.lightState.LightRed.On:
+                        #print("Turning off red light")
+                        GPIO.output(self.lightState.LightRed.Pin, 0)
 
-                if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid":
-                    #print("Turning on red light solid")
-                    GPIO.output(self.lightState.LightRed.Pin, 1)
-                elif not self.lightState.LightRed.On:
-                    #print("Turning off red light")
-                    GPIO.output(self.lightState.LightRed.Pin, 0)
-                
-                if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid":
-                    #print("Turning on orange light solid")
-                    GPIO.output(self.lightState.LightOrange.Pin, 1)
-                elif not self.lightState.LightOrange.On:
-                    #print("Turning off orange light")
-                    GPIO.output(self.lightState.LightOrange.Pin, 0)
+                    if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid":
+                        #print("Turning on orange light solid")
+                        GPIO.output(self.lightState.LightOrange.Pin, 1)
+                    elif not self.lightState.LightOrange.On:
+                        #print("Turning off orange light")
+                        GPIO.output(self.lightState.LightOrange.Pin, 0)
 
-                if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid":
-                    #print("Turning on green light solid")
-                    GPIO.output(self.lightState.LightGreen.Pin, 1)
-                elif not self.lightState.LightGreen.On:
-                    #print("Turning off green light")
-                    GPIO.output(self.lightState.LightGreen.Pin, 0)
-
-                # Free lock to release next thread
-                threadLock.release()
+                    if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid":
+                        #print("Turning on green light solid")
+                        GPIO.output(self.lightState.LightGreen.Pin, 1)
+                    elif not self.lightState.LightGreen.On:
+                        #print("Turning off green light")
+                        GPIO.output(self.lightState.LightGreen.Pin, 0)
+                finally:
+                    # Free lock to release next thread
+                    threadLock.release()
             else:
                 GPIO.output(self.lightState.Switch.Pin, 0)
                 #print("Outside business hours, wait a minute")
