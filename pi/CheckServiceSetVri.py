@@ -6,6 +6,7 @@ import time
 import urllib.request
 import RPi.GPIO as GPIO
 import json
+import traceback
 
 time.sleep(12)
 
@@ -229,11 +230,15 @@ while True:
             t.join()
     except Exception as ex:
         print("Exception found!")
-        data = {"message": ex, "level": "error"}
+        error = str(ex) + " | with stacktrace: " + traceback.format_exc()
+        data = {"message": error, "level": "error"}
 
         json_data = json.dumps(data)
-        req = urllib.request.Request("https://healthlight.azurewebsites.net/api/SaveLogging?code=vmLIhZBCghiCYjqEzh9OfZsUS0m1JELeR06aa/c65CaXoyszknM1gg==", data=json_data)
-        url = urllib.request.urlopen(req)
+        headers = {'Content-type': 'application/json'}
+        jsondataasbytes = json_data.encode('utf-8')
+        req = urllib.request.Request("https://healthlight.azurewebsites.net/api/SaveLogging?code=vmLIhZBCghiCYjqEzh9OfZsUS0m1JELeR06aa/c65CaXoyszknM1gg==", headers=headers)
+        url = urllib.request.urlopen(req,data=jsondataasbytes)
+
         threadData.stop()
         threadLight.stop()
         blinkThread.stop()
