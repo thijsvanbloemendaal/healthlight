@@ -8,6 +8,8 @@ import RPi.GPIO as GPIO
 import json
 import traceback
 
+version = "1.0"
+
 time.sleep(12)
 
 GPIO.setmode(GPIO.BCM)
@@ -130,7 +132,7 @@ class readData (threading.Thread):
                 threadLock.acquire()
                 try:
                     ip = get_ip()
-                    headers = {"IP": ip}
+                    headers = {"IP": ip, "scriptVersion": version}
                     req = urllib.request.Request(self.uri, headers=headers)
                     url = urllib.request.urlopen(req)
                     data = json.loads(url.read().decode())
