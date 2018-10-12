@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 import json
 import traceback
 
-version = "1.0"
+version = "1.1"
 
 time.sleep(12)
 
@@ -241,10 +241,10 @@ while True:
             jsondataasbytes = json_data.encode('utf-8')
             req = urllib.request.Request("https://healthlight.azurewebsites.net/api/SaveLogging?code=vmLIhZBCghiCYjqEzh9OfZsUS0m1JELeR06aa/c65CaXoyszknM1gg==", headers=headers)
             url = urllib.request.urlopen(req,data=jsondataasbytes)
-        finally:
-            threadData.stop()
-            threadLight.stop()
-            blinkThread.stop()
+    finally:
+        threadData.stop()
+        threadLight.stop()
+        blinkThread.stop()
 
 
 print ("Exiting Main Thread")
