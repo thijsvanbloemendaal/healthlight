@@ -242,7 +242,7 @@ while True:
             req = urllib.request.Request("https://healthlight.azurewebsites.net/api/SaveLogging?code=vmLIhZBCghiCYjqEzh9OfZsUS0m1JELeR06aa/c65CaXoyszknM1gg==", headers=headers)
             url = urllib.request.urlopen(req,data=jsondataasbytes)
         except:
-        		print("Cannot write exception!")
+            print("Cannot write exception!")
     finally:
         threadData.stop()
         threadLight.stop()
