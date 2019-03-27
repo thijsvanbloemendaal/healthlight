@@ -134,18 +134,33 @@ class readData (threading.Thread):
                     ip = get_ip()
                     headers = {"IP": ip, "scriptVersion": version}
                     req = urllib.request.Request(self.uri, headers=headers)
-                    url = urllib.request.urlopen(req)
-                    data = json.loads(url.read().decode())
+                    try:
+                        url = urllib.request.urlopen(req)
+                        data = json.loads(url.read().decode())
 
-                    self.lightState.LightRed.On = data['LightRed']['On']
-                    self.lightState.LightRed.Pattern = data['LightRed']['Pattern']
+                        self.lightState.LightRed.On = data['LightRed']['On']
+                        self.lightState.LightRed.Pattern = data['LightRed']['Pattern']
 
-                    self.lightState.LightOrange.On = data['LightOrange']['On']
-                    self.lightState.LightOrange.Pattern = data['LightOrange']['Pattern']
+                        self.lightState.LightOrange.On = data['LightOrange']['On']
+                        self.lightState.LightOrange.Pattern = data['LightOrange']['Pattern']
 
-                    self.lightState.LightGreen.On = data['LightGreen']['On']
-                    self.lightState.LightGreen.Pattern = data['LightGreen']['Pattern']
-
+                        self.lightState.LightGreen.On = data['LightGreen']['On']
+                        self.lightState.LightGreen.Pattern = data['LightGreen']['Pattern']
+                    except URLError as e:
+                        if hasattr(e, 'reason'):
+                            print('We failed to reach a server.')
+                            print('Reason: ', e.reason)
+                        elif hasattr(e, 'code'):
+                            print('The server couldn\'t fulfill the request.')
+                            print('Error code: ', e.code)
+                        self.lightState.LightOrange.On = True
+                        self.lightState.LightOrange.Pattern = "blink"
+                        
+                        self.lightState.LightRed.On = False
+                        self.lightState.LightRed.Pattern = "solid"
+                        
+                        self.lightState.LightGreen.On = False
+                        self.lightState.LightGreen.Pattern = "solid"
                     # Free lock to release next thread
                 finally:
                     threadLock.release()
