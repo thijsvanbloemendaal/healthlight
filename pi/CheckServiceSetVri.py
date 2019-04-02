@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 import json
 import traceback
 
-version = "1.6"
+version = "1.2"
 
 time.sleep(12)
 
@@ -134,33 +134,20 @@ class readData (threading.Thread):
                     ip = get_ip()
                     headers = {"IP": ip, "scriptVersion": version}
                     req = urllib.request.Request(self.uri, headers=headers)
-                    try:
-                        url = urllib.request.urlopen(req)
-                        data = json.loads(url.read().decode())
+                    url = urllib.request.urlopen(req)
+                    data = json.loads(url.read().decode())
 
-                        self.lightState.LightRed.On = data['LightRed']['On']
-                        self.lightState.LightRed.Pattern = data['LightRed']['Pattern']
+                    self.lightState.LightRed.On = data['LightRed']['On']
+                    self.lightState.LightRed.Pattern = data['LightRed']['Pattern']
 
-                        self.lightState.LightOrange.On = data['LightOrange']['On']
-                        self.lightState.LightOrange.Pattern = data['LightOrange']['Pattern']
+                    self.lightState.LightOrange.On = data['LightOrange']['On']
+                    self.lightState.LightOrange.Pattern = data['LightOrange']['Pattern']
 
-                        self.lightState.LightGreen.On = data['LightGreen']['On']
-                        self.lightState.LightGreen.Pattern = data['LightGreen']['Pattern']
-                    except urllib.error.URLError as e:
-                        if hasattr(e, 'reason'):
-                            print('We failed to reach a server.')
-                            print('Reason: ', e.reason)
-                        elif hasattr(e, 'code'):
-                            print('The server couldn\'t fulfill the request.')
-                            print('Error code: ', e.code)
-                        self.lightState.LightOrange.On = True
-                        self.lightState.LightOrange.Pattern = "blink"
-                        
-                        self.lightState.LightRed.On = False
-                        
-                        self.lightState.LightGreen.On = False
-                finally:
+                    self.lightState.LightGreen.On = data['LightGreen']['On']
+                    self.lightState.LightGreen.Pattern = data['LightGreen']['Pattern']
+
                     # Free lock to release next thread
+                finally:
                     threadLock.release()
                     print("States set")
                     time.sleep(5)
@@ -191,27 +178,24 @@ class setLight (threading.Thread):
                 # Get lock to synchronize threads
                 threadLock.acquire()
                 try:
-                    green_is_on = GPIO.input(RELAY.GREEN)
-                    orange_is_on = GPIO.input(RELAY.ORANGE)
-                    red_is_on = GPIO.input(RELAY.RED)
-                    if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid" and not red_is_on:
+                    if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid":
                         #print("Turning on red light solid")
                         GPIO.output(self.lightState.LightRed.Pin, 1)
-                    elif not self.lightState.LightRed.On and red_is_on:
+                    elif not self.lightState.LightRed.On:
                         #print("Turning off red light")
                         GPIO.output(self.lightState.LightRed.Pin, 0)
 
-                    if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid" and not orange_is_on:
+                    if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid":
                         #print("Turning on orange light solid")
                         GPIO.output(self.lightState.LightOrange.Pin, 1)
-                    elif not self.lightState.LightOrange.On and orange_is_on:
+                    elif not self.lightState.LightOrange.On:
                         #print("Turning off orange light")
                         GPIO.output(self.lightState.LightOrange.Pin, 0)
 
-                    if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid" and not green_is_on:
+                    if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid":
                         #print("Turning on green light solid")
                         GPIO.output(self.lightState.LightGreen.Pin, 1)
-                    elif not self.lightState.LightGreen.On and green_is_on:
+                    elif not self.lightState.LightGreen.On:
                         #print("Turning off green light")
                         GPIO.output(self.lightState.LightGreen.Pin, 0)
                 finally:
