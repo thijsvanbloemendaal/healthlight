@@ -5,7 +5,6 @@ import threading
 import time
 import urllib.request
 import RPi.GPIO as GPIO
-import json
 import traceback
 
 version = "1.6"
@@ -16,16 +15,18 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 uri = "https://healthlight.azurewebsites.net/api/GetLightInfo?code=65NUi6sEoREMPZt2uMaViIZ6KoqrbHWBxAJAgIw3IuVb/qyYjdQZow=="
 
+
 class RELAY:
     RED = 13
     ORANGE = 19
     GREEN = 26
     ON = 6
 
-GPIO.setup(RELAY.ON,GPIO.OUT)
-GPIO.setup(RELAY.RED,GPIO.OUT)
-GPIO.setup(RELAY.ORANGE,GPIO.OUT)
-GPIO.setup(RELAY.GREEN,GPIO.OUT)
+GPIO.setup(RELAY.ON, GPIO.OUT)
+GPIO.setup(RELAY.RED, GPIO.OUT)
+GPIO.setup(RELAY.ORANGE, GPIO.OUT)
+GPIO.setup(RELAY.GREEN, GPIO.OUT)
+
 
 class LightState:
     class Light:
@@ -44,6 +45,7 @@ class LightState:
     LightGreen = Light(RELAY.GREEN, True, "solid")
     Switch = Switch()
 
+
 class BlinkThread(threading.Thread):
     """Thread class with a stop() method. The thread itself has to check
     regularly for the stopped() condition."""
@@ -61,25 +63,25 @@ class BlinkThread(threading.Thread):
 
     def join(self, *args, **kwargs):
         self.stop()
-        super(BlinkThread,self).join(*args, **kwargs)
+        super(BlinkThread, self).join(*args, **kwargs)
 
     def run(self):
-        print ("Starting " + self.name)
+        print("Starting " + self.name)
         while not self._stop_event.is_set():
-            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
+            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime:
                 if time.time() - self.currentTime > 1:
                     self.currentTime = time.time()
                     threadLock.acquire()
                     try:
                         if self.state:
                             if lightState.LightRed.Pattern == "blink" and lightState.LightRed.On:
-                                #print("Blinking red light")
+                                # print("Blinking red light")
                                 GPIO.output(lightState.LightRed.Pin, 0)
                             if lightState.LightOrange.Pattern == "blink" and lightState.LightOrange.On:
-                                #print("Blinking orange light")
+                                # print("Blinking orange light")
                                 GPIO.output(lightState.LightOrange.Pin, 0)
                             if lightState.LightGreen.Pattern == "blink" and lightState.LightGreen.On:
-                                #print("Blinking green light")
+                                # print("Blinking green light")
                                 GPIO.output(lightState.LightGreen.Pin, 0)
                             self.state = False
                         else:
@@ -97,6 +99,7 @@ class BlinkThread(threading.Thread):
                 time.sleep(60)
         print("stopped blinking!")
 
+
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -108,6 +111,7 @@ def get_ip():
     finally:
         s.close()
     return IP
+
 
 class readData (threading.Thread):
     def __init__(self, name, lightState, uri):
@@ -122,12 +126,12 @@ class readData (threading.Thread):
 
     def join(self, *args, **kwargs):
         self.stop()
-        super(readData,self).join(*args, **kwargs)
+        super(readData, self).join(*args, **kwargs)
 
     def run(self):
-        print ("Starting " + self.name)
+        print("Starting " + self.name)
         while not self._stop_event.is_set():
-            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
+            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime:
                 # Get lock to synchrSonize threads
                 threadLock.acquire()
                 try:
@@ -168,6 +172,7 @@ class readData (threading.Thread):
                 print("Outside business hours, wait a minute. Time is: " + str(datetime.datetime.now().time()))
                 time.sleep(60)
 
+
 class setLight (threading.Thread):
     def __init__(self, name, lightState):
         threading.Thread.__init__(self)
@@ -180,13 +185,13 @@ class setLight (threading.Thread):
 
     def join(self, *args, **kwargs):
         self.stop()
-        super(setLight,self).join(*args, **kwargs)
+        super(setLight, self).join(*args, **kwargs)
 
     def run(self):
-        print ("Starting " + self.name)
+        print("Starting " + self.name)
       
         while not self._stop_event.is_set():
-            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime :
+            if datetime.datetime.now().time() > self.lightState.Switch.StartTime and datetime.datetime.now().time() < self.lightState.Switch.EndTime:
                 GPIO.output(self.lightState.Switch.Pin, 1)
                 # Get lock to synchronize threads
                 threadLock.acquire()
@@ -195,31 +200,31 @@ class setLight (threading.Thread):
                     orange_is_on = GPIO.input(RELAY.ORANGE)
                     red_is_on = GPIO.input(RELAY.RED)
                     if self.lightState.LightRed.On and self.lightState.LightRed.Pattern == "solid" and not red_is_on:
-                        #print("Turning on red light solid")
+                        # print("Turning on red light solid")
                         GPIO.output(self.lightState.LightRed.Pin, 1)
                     elif not self.lightState.LightRed.On and red_is_on:
-                        #print("Turning off red light")
+                        # print("Turning off red light")
                         GPIO.output(self.lightState.LightRed.Pin, 0)
 
                     if self.lightState.LightOrange.On and self.lightState.LightOrange.Pattern == "solid" and not orange_is_on:
-                        #print("Turning on orange light solid")
+                        # print("Turning on orange light solid")
                         GPIO.output(self.lightState.LightOrange.Pin, 1)
                     elif not self.lightState.LightOrange.On and orange_is_on:
-                        #print("Turning off orange light")
+                        # print("Turning off orange light")
                         GPIO.output(self.lightState.LightOrange.Pin, 0)
 
                     if self.lightState.LightGreen.On and self.lightState.LightGreen.Pattern == "solid" and not green_is_on:
-                        #print("Turning on green light solid")
+                        # print("Turning on green light solid")
                         GPIO.output(self.lightState.LightGreen.Pin, 1)
                     elif not self.lightState.LightGreen.On and green_is_on:
-                        #print("Turning off green light")
+                        # print("Turning off green light")
                         GPIO.output(self.lightState.LightGreen.Pin, 0)
                 finally:
                     # Free lock to release next thread
                     threadLock.release()
             else:
                 GPIO.output(self.lightState.Switch.Pin, 0)
-                #print("Outside business hours, wait a minute")
+                # print("Outside business hours, wait a minute")
                 time.sleep(60)
 
 threadLock = threading.Lock()
@@ -256,7 +261,7 @@ while True:
             headers = {'Content-type': 'application/json'}
             jsondataasbytes = json_data.encode('utf-8')
             req = urllib.request.Request("https://healthlight.azurewebsites.net/api/SaveLogging?code=vmLIhZBCghiCYjqEzh9OfZsUS0m1JELeR06aa/c65CaXoyszknM1gg==", headers=headers)
-            url = urllib.request.urlopen(req,data=jsondataasbytes)
+            url = urllib.request.urlopen(req, data=jsondataasbytes)
         except:
             print("Failed to log exception to azure!")
     finally:
@@ -265,4 +270,4 @@ while True:
         blinkThread.stop()
 
 
-print ("Exiting Main Thread")
+print("Exiting Main Thread")
